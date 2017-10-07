@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddUserToNewsTable extends Migration
+class CreateNewsCategoryTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,9 @@ class AddUserToNewsTable extends Migration
      */
     public function up()
     {
-        Schema::table('news', function (Blueprint $table) {
-            $table->integer('user_id')->unsigned()->after('body');
-
-            $table->foreign('user_id')->references('id')->on('users');
+        Schema::create('news_category', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
         });
     }
 
@@ -27,8 +26,6 @@ class AddUserToNewsTable extends Migration
      */
     public function down()
     {
-        Schema::table('news', function (Blueprint $table) {
-            $table->dropColumn('user_id');
-        });
+        Schema::dropIfExists('news_category');
     }
 }

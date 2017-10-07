@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddCategoryToNewsTable extends Migration
+class AddNewsIdCategoryIdNewsCategoryTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class AddCategoryToNewsTable extends Migration
      */
     public function up()
     {
-        Schema::table('news', function (Blueprint $table) {
-            $table->integer('category_id')->unsigned()->after('body');
+        Schema::table('news_category', function (Blueprint $table) {
+            $table->integer('category_id')->unsigned();
+            $table->integer('news_id')->unsigned();
 
             $table->foreign('category_id')->references('id')->on('categories');
+            $table->foreign('news_id')->references('id')->on('news');
         });
     }
 
@@ -27,8 +29,6 @@ class AddCategoryToNewsTable extends Migration
      */
     public function down()
     {
-        Schema::table('news', function (Blueprint $table) {
-            $table->dropColumn('category_id');
-        });
+        //
     }
 }
