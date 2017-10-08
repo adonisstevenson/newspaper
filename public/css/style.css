@@ -1,6 +1,58 @@
 body{
 	background: #f6f6f6;
 }
-.navbar-nav>li>a{
+.navbar-nav>li>a, .navbar-brand{
 	color: #f1f1f1 !important;
+}
+label{
+	margin-top: 10px;
+}
+.left{
+	float: left;
+}
+.right{
+	float: right;
+}
+.inline{
+	display: inline-block;
+}
+.news>p{
+	font-size: 18px;
+}
+.newsBox{
+	position: relative;
+	margin: 5px 0px;
+}
+.titleBox{
+	position: absolute;
+	left: 0;
+	bottom: 20%;
+	text-align: center;
+	padding: 0 10px;
+	width: 100%;
+}
+.topBox{
+	width: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	padding: 10px;
+}
+span.newsTitle{
+	color: #f6f6f6;
+	font-size: 2em;
+	text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8);
+	font-weight: bold;
+}
+span.newsSmall{
+	font-size: 1.5em;
+}
+@media only screen and (max-width: 425px) {
+
+   span.newsTitle{
+   	font-size: 1.2em;
+   }
+   span.newsSmall{
+	font-size: 0.9em;
+}
 }

@@ -11,7 +11,7 @@ class News extends Model
     	return $this->belongsTo('App\User');
     }
 
-    public function category(){
+    public function categories(){
 
     	return $this->belongsToMany('App\Category');
     }

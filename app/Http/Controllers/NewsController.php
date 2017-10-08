@@ -3,6 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Http\File;
+use App\News;
+use App\Category;
+
 
 class NewsController extends Controller
 {
@@ -13,7 +20,10 @@ class NewsController extends Controller
      */
     public function index()
     {
-        //
+        $newsMain = News::latest()->first();
+        $news = News::latest()->offset(1)->limit(6)->get();
+
+        return view('pages.home')->withNews($news)->withNewsMain($newsMain);
     }
 
     /**
@@ -23,7 +33,8 @@ class NewsController extends Controller
      */
     public function create()
     {
-        echo "create";
+        
+        return view('news.create');
     }
 
     /**
@@ -34,7 +45,30 @@ class NewsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|unique:news|max:100',
+            'body' => 'required',
+            'photo' => 'required',
+            'categories' => 'required',
+        ]);
+
+        $news = new News();
+        $news->title = $request->title;
+        $news->body = $request->body;
+        $news->user_id = Auth::user()->id;
+
+        $image = $request->file('photo');
+        $filename = time() . '.' . $image->getClientOriginalExtension();
+        Storage::disk('public')->putFileAs('news_photo', new File($image), $filename);
+
+        $news->photo = $filename;
+        $news->save();
+
+        $news->categories()->sync($request->categories, false);
+
+        Session::flash('message', 'News uploaded successfully!');
+
+        return redirect()->route('news.show', $news->id);
     }
 
     /**
@@ -45,7 +79,9 @@ class NewsController extends Controller
      */
     public function show($id)
     {
-        //
+        $news = News::find($id);
+
+        return view('news.show')->withNews($news);
     }
 
     /**
@@ -56,7 +92,14 @@ class NewsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $news = News::find($id);
+        $categories = Category::all();
+        $categories2 = [];
+        foreach ($categories as $category) {
+            $categories2[$category->id] = $category->name;
+        }
+
+        return view('news.edit')->withNews($news)->withCats($categories2);
     }
 
     /**
@@ -68,7 +111,32 @@ class NewsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'title' => 'required|max:100',
+            'body' => 'required',
+            'categories' => 'required',
+        ]);
+
+        $news = News::find($id);
+        $news->title = $request->title;
+        $news->body = $request->body;
+        if($request->hasFile('photo')){
+            #delete old photo
+            Storage::disk('public')->delete('news_photo/'.$news->photo);
+            #upload new
+            $image = $request->file('photo');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            Storage::disk('public')->putFileAs('news_photo', new File($image), $filename);
+
+            $news->photo = $filename;
+        }
+        $news->save();
+
+        $news->categories()->sync($request->categories);
+
+        Session::flash('message', 'News edited successfully!');
+
+        return redirect()->route('news.show', $id);
     }
 
     /**
@@ -80,5 +148,9 @@ class NewsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function byCategory($category){
+
     }
 }

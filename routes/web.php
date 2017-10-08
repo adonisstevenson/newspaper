@@ -11,18 +11,22 @@
 |
 */
 
-Route::get('/', 'PagesController@index');
+Route::get('/', 'NewsController@index');
 
 Route::get('logout', 'PagesController@logout');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-
 Route::group(['middleware' => ['role:writer']], function () {
 
    Route::resource('news', 'NewsController', ['except' => [
-    	'create', 'store', 'update', 'destroy'
+    	'show'
 	]]);
 
 });
+
+Route::resource('news', 'NewsController', ['except' => [
+    'create', 'store', 'update', 'destroy'
+]]);
+
+Route::get('{category}', 'NewsController@byCategory');
