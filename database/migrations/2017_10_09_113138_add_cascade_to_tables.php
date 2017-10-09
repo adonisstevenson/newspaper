@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateNewsCategoryTable extends Migration
+class AddCascadeToTables extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateNewsCategoryTable extends Migration
      */
     public function up()
     {
-        Schema::create('category_news', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamps();
+        Schema::table('category_news', function (Blueprint $table) {
+
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreign('news_id')->references('id')->on('news')->onDelete('cascade');
         });
     }
 
@@ -26,6 +27,6 @@ class CreateNewsCategoryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('news_category');
+        //
     }
 }

@@ -15,18 +15,18 @@ Route::get('/', 'NewsController@index');
 
 Route::get('logout', 'PagesController@logout');
 
-Auth::routes();
-
 Route::group(['middleware' => ['role:writer']], function () {
 
-   Route::resource('news', 'NewsController', ['except' => [
-    	'show'
+   Route::resource('news', 'NewsController', ['only' => [
+    	'create', 'store', 'update', 'destroy'
 	]]);
 
 });
 
-Route::resource('news', 'NewsController', ['except' => [
-    'create', 'store', 'update', 'destroy'
+Route::resource('news', 'NewsController', ['only' => [
+    'show'
 ]]);
 
 Route::get('{category}', 'NewsController@byCategory')->name('category');
+
+Auth::routes();

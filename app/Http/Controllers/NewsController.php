@@ -143,7 +143,11 @@ class NewsController extends Controller
      */
     public function destroy($id)
     {
-        $news = News::destroy($id);
+        $news = News::find($id);
+
+        $news->delete();
+
+        return redirect('/')->with('message', 'News succesfully removed');
 
     }
 
@@ -151,8 +155,6 @@ class NewsController extends Controller
 
         $cat = Category::where('name', $category)->firstOrFail();
 
-        $news = $cat->news;
-
-        return view('news.category')->withNews($news);
+        return view('news.category')->withNews($cat->news);
     }
 }
