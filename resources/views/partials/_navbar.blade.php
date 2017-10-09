@@ -15,7 +15,7 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         @foreach($categories as $category)
-          <li><a href="#">{{ucfirst($category->name)}}</a></li>
+          <li><a href="{{ route('category', $category->name) }}">{{ucfirst($category->name)}}</a></li>
         @endforeach
       </ul>
       <ul class="nav navbar-nav navbar-right">

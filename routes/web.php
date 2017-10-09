@@ -29,4 +29,4 @@ Route::resource('news', 'NewsController', ['except' => [
     'create', 'store', 'update', 'destroy'
 ]]);
 
-Route::get('{category}', 'NewsController@byCategory');
+Route::get('{category}', 'NewsController@byCategory')->name('category');

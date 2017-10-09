@@ -7,12 +7,14 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\File;
+use App\Traits\ImageUpload;
 use App\News;
 use App\Category;
 
 
 class NewsController extends Controller
-{
+{   
+    use ImageUpload;
     /**
      * Display a listing of the resource.
      *
@@ -57,11 +59,9 @@ class NewsController extends Controller
         $news->body = $request->body;
         $news->user_id = Auth::user()->id;
 
-        $image = $request->file('photo');
-        $filename = time() . '.' . $image->getClientOriginalExtension();
-        Storage::disk('public')->putFileAs('news_photo', new File($image), $filename);
+        $image = $this->uploadNewsPhoto($request->file('photo'));
 
-        $news->photo = $filename;
+        $news->photo = $image;
         $news->save();
 
         $news->categories()->sync($request->categories, false);
@@ -121,14 +121,10 @@ class NewsController extends Controller
         $news->title = $request->title;
         $news->body = $request->body;
         if($request->hasFile('photo')){
-            #delete old photo
-            Storage::disk('public')->delete('news_photo/'.$news->photo);
-            #upload new
-            $image = $request->file('photo');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('public')->putFileAs('news_photo', new File($image), $filename);
 
-            $news->photo = $filename;
+            $photo = $this->uploadNewsPhoto($request->file('photo'), $news->photo);
+
+            $news->photo = $photo;
         }
         $news->save();
 
@@ -147,10 +143,16 @@ class NewsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $news = News::destroy($id);
+
     }
 
     public function byCategory($category){
 
+        $cat = Category::where('name', $category)->firstOrFail();
+
+        $news = $cat->news;
+
+        return view('news.category')->withNews($news);
     }
 }
