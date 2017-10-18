@@ -21,7 +21,7 @@ label{
 }
 .newsBox{
 	position: relative;
-	margin: 5px 0px;
+	margin: 5px -10px;
 }
 .titleBox{
 	position: absolute;
@@ -50,9 +50,33 @@ span.newsSmall{
 @media only screen and (max-width: 425px) {
 
    span.newsTitle{
-   	font-size: 1.2em;
+   		font-size: 1.2em;
    }
    span.newsSmall{
-	font-size: 0.9em;
+		font-size: 0.9em;
+	}
 }
+.commentRow{
+	padding: 10px;
+	display: inline-block;
+	vertical-align: middle;
+}
+.commentBox{
+	width: 100%;
+	margin: 5px 0px;
+}
+
+.commentUser{
+	font-weight: bold;
+	color: #24405C;
+	font-size: 14px;
+	margin-right: 5px;
+}
+.btn{
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+.clearBtn{
+	background: none;
+	border: none;
 }

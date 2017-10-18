@@ -6,8 +6,8 @@
 	<div class="row">
 		<div class="col-md-8">
 			<div class="newsBox">
-				<a href="{{ route('news.show', $newsMain->id) }}">
-					<img src="{{ asset('storage/news_photo/'.$newsMain->photo) }}" width="100%">
+				<a href="{{ route('news.show', $newsMain->slug) }}">
+					<img src="{{ asset('storage/'.$newsMain->photo) }}" width="100%">
 				</a>
 				<div class="topBox">
 					@foreach($newsMain->categories as $category)
@@ -24,8 +24,8 @@
 		@foreach($news as $n)
 		<div class="col-md-4">
 			<div class="newsBox">
-				<a href="{{ route('news.show', $n->id) }}">
-					<img src="{{ asset('storage/news_photo/'.$n->photo) }}" width="100%">
+				<a href="{{ route('news.show', $n->slug) }}">
+					<img src="{{ asset('storage/'.$n->photo) }}" width="100%">
 				</a>
 				<div class="topBox">
 					@foreach($n->categories as $category)

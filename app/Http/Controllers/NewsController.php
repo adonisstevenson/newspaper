@@ -3,25 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\StoreNewsRequest;
+use App\Http\Requests\UpdateNewsRequest;
+
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Http\File;
-use App\Traits\ImageUpload;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
+
 use App\News;
 use App\Category;
 
-
 class NewsController extends Controller
 {   
-    use ImageUpload;
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    {   
+
         $newsMain = News::latest()->first();
         $news = News::latest()->offset(1)->limit(6)->get();
 
@@ -45,43 +46,41 @@ class NewsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreNewsRequest $request)
     {
-        $request->validate([
-            'title' => 'required|unique:news|max:100',
-            'body' => 'required',
-            'photo' => 'required',
-            'categories' => 'required',
-        ]);
 
         $news = new News();
         $news->title = $request->title;
         $news->body = $request->body;
         $news->user_id = Auth::user()->id;
 
-        $image = $this->uploadNewsPhoto($request->file('photo'));
+        $filename = 'news_photo/'.time().'.'.$request->file('photo')->getClientOriginalExtension();
 
-        $news->photo = $image;
+        $img = Image::make($request->file('photo')->getRealPath())->resize(1366, 768)->stream();
+
+        Storage::disk('public')->put($filename, $img, 'public');
+
+        $news->photo = $filename;
+
         $news->save();
 
         $news->categories()->sync($request->categories, false);
 
-        Session::flash('message', 'News uploaded successfully!');
-
-        return redirect()->route('news.show', $news->id);
+        return redirect()->route('news.show', $news->slug)->with('message', 'News uploaded successfully!');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  string  $slug
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
-        $news = News::find($id);
+        $news = News::findBySlugOrFail($slug);
+        $comments = $news->comments()->orderBy('created_at', 'desc')->get();
 
-        return view('news.show')->withNews($news);
+        return view('news.show')->withNews($news)->withComments($comments);
     }
 
     /**
@@ -109,30 +108,31 @@ class NewsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateNewsRequest $request, $id)
     {
-        $request->validate([
-            'title' => 'required|max:100',
-            'body' => 'required',
-            'categories' => 'required',
-        ]);
 
         $news = News::find($id);
         $news->title = $request->title;
         $news->body = $request->body;
+
         if($request->hasFile('photo')){
 
-            $photo = $this->uploadNewsPhoto($request->file('photo'), $news->photo);
+            Storage::disk('public')->delete($news->photo);
 
-            $news->photo = $photo;
+            $filename = 'news_photo/'.time().'.'.$request->file('photo')->getClientOriginalExtension();
+
+            $img = Image::make($request->file('photo')->getRealPath())->resize(1366, 768)->stream();
+
+            Storage::disk('public')->put($filename, $img, 'public');
+
+            $news->photo = $filename;
         }
+
         $news->save();
 
         $news->categories()->sync($request->categories);
 
-        Session::flash('message', 'News edited successfully!');
-
-        return redirect()->route('news.show', $id);
+        return redirect()->route('news.show', $news->slug)->with('message', 'News edited successfully!');
     }
 
     /**
@@ -141,20 +141,26 @@ class NewsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function destroy($id)
     {
-        $news = News::find($id);
-
-        $news->delete();
+        $news = News::find($id)->delete();
 
         return redirect('/')->with('message', 'News succesfully removed');
 
     }
 
+    /**
+     * Sort news by category 
+     * 
+     * @param string $category
+     * @return \Illuminate\Http\Response
+     */
     public function byCategory($category){
 
         $cat = Category::where('name', $category)->firstOrFail();
 
         return view('news.category')->withNews($cat->news);
     }
+
 }

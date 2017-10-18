@@ -15,18 +15,24 @@ Route::get('/', 'NewsController@index');
 
 Route::get('logout', 'PagesController@logout');
 
-Route::group(['middleware' => ['role:writer']], function () {
 
-   Route::resource('news', 'NewsController', ['only' => [
-    	'create', 'store', 'update', 'destroy'
-	]]);
+Route::resource('news', 'NewsController', ['only' => ['create', 'store', 'update', 'destroy', 'edit']])->middleware('role:writer');
 
-});
+Route::get('news/{slug}', 'NewsController@show')->name('news.show');
 
-Route::resource('news', 'NewsController', ['only' => [
-    'show'
-]]);
 
-Route::get('{category}', 'NewsController@byCategory')->name('category');
+Route::resource('comments', 'CommentsController', ['only' => ['store']])->middleware('auth');
+
+Route::resource('comments', 'CommentsController', ['only' => ['destroy']])->middleware('role:admin');
+
+
+Route::resource('users', 'UsersController', ['only' => ['edit', 'update']])->middleware(['auth', 'isProfileOwner']);
+
+Route::resource('users', 'UsersController', ['only'=>['show']]);
+
 
 Auth::routes();
+
+
+Route::get('{category}', 'NewsController@listByCategory')->name('category');
+

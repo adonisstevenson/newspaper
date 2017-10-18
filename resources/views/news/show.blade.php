@@ -6,7 +6,7 @@
 	<div class="row">
 		<div class="col-md-8">
 			<div class="news">
-				<img src="{{ asset('storage/news_photo/'.$news->photo) }}" width="100%">
+				<img src="{{ asset('storage/'.$news->photo) }}" width="100%">
 				<small class="left">{{ $news->user->name }}</small>
 				<small class="right">{{ $news->created_at }}</small>
 				<h1>{{ $news->title }}</h1>
@@ -28,5 +28,7 @@
 		</div>
 		@endrole
 	</div>
+	@include('comments._create')
+	@include('comments._list')
 </div>
 @endsection

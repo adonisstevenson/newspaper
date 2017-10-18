@@ -4,8 +4,13 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
-use App\Category;
 use Illuminate\Support\Facades\View;
+use App\Observers\NewsObserver;
+use App\Observers\UserObserver;
+use App\News;
+use App\User;
+use App\Category;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -15,10 +20,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $categories = Category::all();
 
-        View::share('categories', $categories);
+        View::share('categories', Category::all());
+
         Schema::defaultStringLength(191);
+
+        News::observe(NewsObserver::class);
+        User::observe(UserObserver::class);
     }
 
     /**

@@ -8,7 +8,7 @@
 		<div class="col-md-6">
 			<div class="newsBox">
 				<a href="{{ route('news.show', $n->id) }}">
-					<img src="{{ asset('storage/news_photo/'.$n->photo) }}" width="100%">
+					<img src="{{ asset('storage/'.$n->photo) }}" width="100%">
 				</a>
 				<div class="topBox">
 					@foreach($n->categories as $category)

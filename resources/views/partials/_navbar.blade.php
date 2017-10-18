@@ -14,8 +14,12 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        @foreach($categories as $category)
+        @foreach($categories as $category)    
+          @if(Request::is($category->name))
+          <li class="active"><a href="{{ route('category', $category->name) }}">{{ucfirst($category->name)}}<span class="sr-only">(current)</span></a></li>
+          @else
           <li><a href="{{ route('category', $category->name) }}">{{ucfirst($category->name)}}</a></li>
+          @endif
         @endforeach
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -24,8 +28,9 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user-circle-o fa-lg" aria-hidden="true"></i> {{Auth::user()->name}} <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="{{ route('logout') }}">Logout</a></li>
-            @hasrole('writer')
             <li role="separator" class="divider"></li>
+            <li><a href="{{ route('users.show', Auth::user()->id) }}">Profile</a></li>
+            @hasrole('writer')
             <li><a href="{{ route('news.create') }}">Add news</a></li>
             @endhasrole
           </ul>

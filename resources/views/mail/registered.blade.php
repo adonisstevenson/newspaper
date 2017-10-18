@@ -1,0 +1,1 @@
+<h1> Nice to have you {{$user->name}}! </h1>
