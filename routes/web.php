@@ -28,7 +28,11 @@ Route::resource('comments', 'CommentsController', ['only' => ['destroy']])->midd
 
 Route::resource('users', 'UsersController', ['only' => ['edit', 'update']])->middleware(['auth', 'isProfileOwner']);
 
+Route::delete('users/{id}/delete', 'UsersController@destroy')->middleware('role:admin')->name('users.destroy');
+
 Route::resource('users', 'UsersController', ['only'=>['show']]);
+
+Route::get('admin', 'AdminController@index')->middleware('role:admin');
 
 
 Auth::routes();

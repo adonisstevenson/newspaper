@@ -156,7 +156,7 @@ class NewsController extends Controller
      * @param string $category
      * @return \Illuminate\Http\Response
      */
-    public function byCategory($category){
+    public function listByCategory($category){
 
         $cat = Category::where('name', $category)->firstOrFail();
 

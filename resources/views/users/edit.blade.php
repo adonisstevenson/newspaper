@@ -5,10 +5,10 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-8">
-			<h1>Edit news</h1>
+			<h1>Edit profile</h1>
 			{!! Form::model($user, ['route' => ['users.update', $user->id], 'method' => 'PUT', 'files'=>true, 'class'=>'form-group']) !!}
 
-				<img src="{{ asset($user->photo) }}" width="120px"><br>
+				<img src="{{ asset('storage/'.$user->photo) }}" width="120px"><br>
 				{{ Form::label('Change profile photo', '') }}
 				{{ Form::file('photo', []) }}
 
