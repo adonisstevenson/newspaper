@@ -17,3 +17,11 @@
   <li> Middlewares </li>
 </ul>
 
+<p> Other packages: </p>
+
+<ul>
+  <li> laravel-permissions </li>
+  <li> laravelcollective </li>
+  <li> eloquent sluggable </li>
+</ul>
+
